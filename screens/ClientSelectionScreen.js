@@ -49,14 +49,15 @@ const ClientSelectionScreen = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.title}>Select a Client</Text>
       {clients.length > 0 ? (
         clients.map((client, index) => (
           <TouchableOpacity
             key={index}
             style={styles.button}
             onPress={() => {
-              console.log("📌 Navigating to TaskList with:", { userId, clientId: client[0], companyId });
-              navigation.navigate('TaskList', { userId, clientId: client[0], companyId });
+              console.log("📌 Navigating to WorkSelection with:", { userId, clientId: client[0], companyId });
+              navigation.navigate('WorkSelection', { userId, clientId: client[0], companyId });
             }}
           >
             <Text style={styles.buttonText}>{client[1]}</Text>

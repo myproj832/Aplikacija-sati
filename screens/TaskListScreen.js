@@ -13,30 +13,32 @@ const TaskListScreen = ({ navigation, route }) => {
   const [expandedSections, setExpandedSections] = useState({});
 
   // ✅ Grupisanje taskova po godinama i mesecima (sortiranje opadajuće)
-  const groupTasksByYearAndMonth = (tasks) => {
-    const grouped = {};
+// ✅ Grupisanje taskova po godinama i mesecima + sortiranje po datumima unutar meseca
+const groupTasksByYearAndMonth = (tasks) => {
+  const grouped = {};
 
-    tasks.forEach(task => {
-      const [id, taskName, date, hours, minutes, username] = task;
-      const [year, month] = date.split('-');
+  tasks.forEach(task => {
+    const [id, taskName, date, hours, minutes, username] = task;
+    const [year, month] = date.split('-');
 
-      if (!grouped[year]) grouped[year] = {};
-      if (!grouped[year][month]) grouped[year][month] = [];
+    if (!grouped[year]) grouped[year] = {};
+    if (!grouped[year][month]) grouped[year][month] = [];
 
-      grouped[year][month].push({ id, taskName, date, hours, minutes, username });
-    });
+    grouped[year][month].push({ id, taskName, date, hours, minutes, username });
+  });
 
-    return Object.entries(grouped)
-      .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
-      .flatMap(([year, months]) =>
-        Object.entries(months)
-          .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
-          .map(([month, data]) => ({
-            title: `${year} - ${month}`,
-            data,
-          }))
-      );
-  };
+  return Object.entries(grouped)
+    .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA)) // Godine opadajuće
+    .flatMap(([year, months]) =>
+      Object.entries(months)
+        .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA)) // Meseci opadajuće
+        .map(([month, data]) => ({
+          title: `${year} - ${month}`,
+          data: data.sort((a, b) => new Date(b.date) - new Date(a.date)) // 🆕 Taskovi sortirani po datumu
+        }))
+    );
+};
+
 
   const fetchTasks = async () => {
     try {
